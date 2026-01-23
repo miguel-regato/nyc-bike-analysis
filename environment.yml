@@ -1,0 +1,14 @@
+name: citibike-analysis
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pandas
+  - numpy
+  - geopandas
+  - shapely
+  - pyproj
+  - scikit-learn
+  - matplotlib
+  - jupyterlab
+  - requests
