@@ -10,5 +10,6 @@ dependencies:
   - pyproj
   - scikit-learn
   - matplotlib
+  - seaborn
   - jupyterlab
   - requests
