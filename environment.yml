@@ -4,6 +4,7 @@ channels:
 dependencies:
   - python=3.10
   - pandas
+  - pyarrow
   - numpy
   - geopandas
   - shapely
