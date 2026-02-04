@@ -141,7 +141,7 @@ for month in months:
 
     # Apply logic: Is it Day or Night?
     # Logic: It is day if started_at is between sunrise and sunset
-    # 1 (day), 0 night
+    # 1 day, 0 night
     df_month['is_day'] = (df_month['started_at'] >= df_month['sunrise']) & (df_month['started_at'] <= df_month['sunset'])
     df_month['is_day'] = df_month['is_day'].astype(int)
 
@@ -149,6 +149,7 @@ for month in months:
     df_month.drop(columns=['temp_time', 'temp_date', 'date_key', 'sunrise', 'sunset'], inplace=True)
 
     # Weekend flag
+    # 1 weekend, 0 weekday
     df_month['is_weekend'] = df_month['started_at'].dt.dayofweek.isin([5,6]).astype(int)
 
     # Save final Parquet
