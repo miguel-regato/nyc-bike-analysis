@@ -2,6 +2,8 @@
 data/raw/
 data/interim/
 data/processed/
+routing/new-york-260209.osm.pbf
+routing/graph-cache/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

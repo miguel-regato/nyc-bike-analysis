@@ -1,0 +1,11 @@
+{
+  "distance_influence": 0,
+  "priority": [
+    { "if": "max_speed > 50 && bike_network == MISSING", "multiply_by": 0.0 },
+    { "if": "road_class == PRIMARY || road_class == SECONDARY", "multiply_by": 0.1 },
+    { "if": "max_speed >= 40 && bike_network == MISSING", "multiply_by": 0.2 }
+  ],
+  "speed": [
+    { "if": "true", "multiply_by": 0.6 }
+  ]
+}

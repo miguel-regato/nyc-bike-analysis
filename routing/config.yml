@@ -1,0 +1,42 @@
+graphhopper:
+  datareader.file: new-york-260209.osm.pbf
+  graph.location: graph-cache
+
+  import.osm.ignored_highways: footway,cycleway,path,pedestrian,steps,construction
+
+  # Bike profiles with different preferences for safety vs. speed, inspired by LTS categories.
+  profiles:
+    # 1. BEGGINNER / KIDS (LTS 1)
+    # Penalize routes without protected bike lanes, especially on fast roads. Prioritize safety over speed.
+    - name: lts1_kids
+      custom_model_files: [bike.json, profiles/lts1.json]
+
+    # 2. SAFE (LTS 2)
+    # Accept some mixed traffic if necessary, but strongly prefer protected bike lanes and low-speed roads.
+    - name: lts2_safe
+      custom_model_files: [bike.json, profiles/lts2.json]
+
+    # 3. CONFIDENT (LTS 3)
+    # More flexible, allowing some mixed traffic and faster roads if they significantly reduce travel time, but still prefer bike-friendly infrastructure.
+    - name: lts3_confident
+      custom_model_files: [bike.json, profiles/lts3.json]
+
+    # 4. DIRECT (LTS 4)
+    # Focus on the shortest route, regardless of bike infrastructure or traffic conditions.
+    - name: lts4_direct
+      custom_model_files: [bike.json, profiles/lts4.json]
+
+  graph.encoded_values: road_class,road_class_link,road_environment,max_speed,road_access,surface,smoothness,bike_priority,bike_network,average_slope,max_slope,roundabout,bike_access,bike_average_speed
+
+  profiles_ch: []
+  profiles_lm: []
+
+server:
+  application_connectors:
+  - type: http
+    port: 8989
+    bind_host: localhost
+  admin_connectors:
+  - type: http
+    port: 8990
+    bind_host: localhost
