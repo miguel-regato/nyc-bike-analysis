@@ -2,7 +2,7 @@ graphhopper:
   datareader.file: new-york-260209.osm.pbf
   graph.location: graph-cache
 
-  import.osm.ignored_highways: footway,cycleway,path,pedestrian,steps,construction
+  import.osm.ignored_highways: steps,construction
 
   # Bike profiles with different preferences for safety vs. speed, inspired by LTS categories.
   profiles:
@@ -29,7 +29,11 @@ graphhopper:
   graph.encoded_values: road_class,road_class_link,road_environment,max_speed,road_access,surface,smoothness,bike_priority,bike_network,average_slope,max_slope,roundabout,bike_access,bike_average_speed
 
   profiles_ch: []
-  profiles_lm: []
+  profiles_lm: 
+    - profile: lts1_kids
+    - profile: lts2_safe
+    - profile: lts3_confident
+    - profile: lts4_direct
 
 server:
   application_connectors:
