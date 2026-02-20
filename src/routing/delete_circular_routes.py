@@ -4,13 +4,13 @@ import glob
 import os
 
 INPUT_PATH = 'data/processed/trips_final/'
-OUTPUT_PATH = 'data/processed/trips-final-cleaned/'
+OUTPUT_PATH = 'data/processed/trips_final_cleaned/'
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 
 dist_bins = [0, 500, 1500, 3000, np.inf]
 dist_labels = ['Very Short (< 500m)', 'Short (500m-1.5km)', 'Medium (1.5km-3km)', 'Long (> 3km)']
 
-VERY_SHORT_LIMIT = 690
+VERY_SHORT_LIMIT = 390
 
 all_files = glob.glob(os.path.join(INPUT_PATH, '*.parquet'))
 
@@ -29,23 +29,31 @@ full_df['dist_group_error'] = pd.cut(
 
 upper_limits = {}
 
-categories_to_check = ['Short (500m-1.5km)', 'Medium (1.5km-3km)', 'Long (> 3km)']
+categories_to_check = dist_labels
 
 for cat in categories_to_check:
     subset = full_df[full_df['dist_group_error'] == cat]['estimation_error_sec']
+
+    if cat == dist_labels[0]:
+        subset = subset[subset <= VERY_SHORT_LIMIT]
 
     if len(subset) > 0:
         Q1 = subset.quantile(0.25)
         Q3 = subset.quantile(0.75)
         IQR = Q3 - Q1
 
-        upper_fence = Q3 + (2 * IQR)
+        if cat == dist_labels[0]:
+            multiplier = 1.5
+        else:
+            multiplier = 2
+
+        upper_fence = Q3 + (multiplier * IQR)
         upper_limits[cat] = upper_fence
         print(f"  [{cat}]: Q3={Q3:.2f} | IQR={IQR:.2f} | Cut limit (> {upper_fence:.2f}s)")
     else:
         upper_limits[cat] = np.inf
 
-del full_df, df_list
+del full_df, df_list, subset
 
 total_removed = 0
 total_trips = 0
@@ -64,15 +72,19 @@ for file in all_files:
         right=True
     )
 
-    mask_ghost = (df['dist_group_error'] == 'Very Short (< 500m)') & (df['estimation_error_sec'] > VERY_SHORT_LIMIT)
-    mask_outlier = pd.Series(False, index=df.index)
+    rows_to_remove = pd.Series(False, index=df.index)
 
     for cat in categories_to_check:
         limit = upper_limits.get(cat, np.inf)
-        mask_cat_outlier = (df['dist_group_error'] == cat) & (df['estimation_error_sec'] > limit)
-        mask_outlier = mask_outlier | mask_cat_outlier
 
-    rows_to_remove = mask_ghost | mask_outlier
+        mask_cat = (df['dist_group_error'] == cat)
+
+        if cat == 'Very Short (< 500m)':
+            mask_outlier = mask_cat & ((df['estimation_error_sec'] > limit) | (df['estimation_error_sec'] > VERY_SHORT_LIMIT))
+        else:
+            mask_outlier = mask_cat & (df['estimation_error_sec'] > limit)
+
+        rows_to_remove = rows_to_remove | mask_outlier
     
     df_clean = df[~rows_to_remove].copy()
     
@@ -86,7 +98,7 @@ for file in all_files:
     
     print(f"  Processing {filename}: Removed {removed_count} trips ({removed_count/original_len:.1%})")
 
-print(f"PROCESS FINISHED.")
+print(f"PROCESS FINISHED")
 print(f"Total trips analyzed: {total_trips}")
 print(f"Total trips removed: {total_removed}")
 print(f"Cleaned files saved to: {OUTPUT_PATH}")

@@ -1,7 +1,8 @@
 {
-  "distance_influence": 70,
+  "distance_influence": 65,
   "priority": [
-    { "if": "road_class == MOTORWAY", "multiply_by": 0.0 }
+    { "if": "road_class == MOTORWAY || road_class == TRUNK", "multiply_by": 0.0 },
+    { "if": "(road_class == PRIMARY || road_class == SECONDARY) && bike_network == MISSING", "multiply_by": 0.4 }
   ],
   "speed": [
     { "if": "true", "multiply_by": 0.95 }

@@ -1,9 +1,8 @@
 {
-  "distance_influence": 0,
+  "distance_influence": 10,
   "priority": [
-    { "if": "max_speed > 50 && bike_network == MISSING", "multiply_by": 0.0 },
-    { "if": "road_class == PRIMARY || road_class == SECONDARY", "multiply_by": 0.1 },
-    { "if": "max_speed >= 40 && bike_network == MISSING", "multiply_by": 0.2 }
+    { "if": "road_class == MOTORWAY || road_class == TRUNK", "multiply_by": 0.0 },
+    { "if": "road_class != CYCLEWAY && road_class != PATH && road_class != PEDESTRIAN && bike_network == MISSING", "multiply_by": 0.05 }
   ],
   "speed": [
     { "if": "true", "multiply_by": 0.6 }

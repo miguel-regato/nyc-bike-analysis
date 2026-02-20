@@ -6,8 +6,6 @@ import time
 import os
 import gc
 
-from shapely import buffer
-
 INPUT_FILE = "data/processed/real_routes.parquet"
 OUTPUT_DIR = "data/processed/matrix_routes"
 GH_URL = "http://localhost:8989/route"
